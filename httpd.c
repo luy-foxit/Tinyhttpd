@@ -508,9 +508,9 @@ int main(void)
         if (client_sock == -1)
             error_die("accept");
         printf("server: got connection from %s\n", inet_ntoa(client_name.sin_addr));
-        //accept_request(&client_sock);
-        if (pthread_create(&newthread , NULL, (void *)accept_request, (void *)(intptr_t)client_sock) != 0)
-            perror("pthread_create");
+        accept_request(client_sock);
+        //if (pthread_create(&newthread , NULL, (void *)accept_request, (void *)(intptr_t)client_sock) != 0)
+        //    perror("pthread_create");
     }
 
     close(server_sock);
