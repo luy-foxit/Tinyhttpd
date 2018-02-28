@@ -24,7 +24,11 @@ int htconnect(char* domain, int port)
     me.sin_family = AF_INET;
     me.sin_port = htons(port);
 
-    return (connect(white_sock, (struct sockaddr*)&me, sizeof(struct sockaddr))<0) ? 1 : white_sock;
+    if(connect(white_sock, (struct sockaddr*)&me, sizeof(struct sockaddr))<0)
+    {
+        return -1;
+    }
+    return white_sock;
 }
 
 int htsend(int sock, char* fmt,...)
@@ -34,6 +38,7 @@ int htsend(int sock, char* fmt,...)
     va_start(argptr, fmt);
     vsprintf(BUF, fmt, argptr);
     va_end(argptr);
+    printf("%s", BUF);
     return send(sock, BUF, strlen(BUF), 0);
 }
 
@@ -41,13 +46,13 @@ void main(int argc, char *argv[])
 {
     int black_sock;
     char bugs_bunny[3];
-    if(argc < 2)
-    {
-        printf("Usage:\n\twww_client host\n");
-        return;
-    }
+    //if(argc < 2)
+    //{
+    //    printf("Usage:\n\twww_client host\n");
+    //    return;
+    //}
 
-    black_sock = htconnect(argv[1], 4000);
+    black_sock = htconnect("localhost", 4000);
     if(black_sock < 0)
     {
         printf("Socket Connect Error!\n");

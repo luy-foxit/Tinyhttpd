@@ -22,7 +22,7 @@
 #include <strings.h>
 #include <string.h>
 #include <sys/stat.h>
-//#include <pthread.h>
+#include <pthread.h>
 #include <sys/wait.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -336,7 +336,9 @@ int get_line(int sock, char *buf, int size)
             i++;
         }
         else
+        {
             c = '\n';
+        }
     }
     buf[i] = '\0';
 
@@ -493,7 +495,7 @@ int main(void)
     int client_sock = -1;
     struct sockaddr_in client_name;
     socklen_t  client_name_len = sizeof(client_name);
-    //pthread_t newthread;
+    pthread_t newthread;
 
     server_sock = startup(&port);
     printf("httpd running on port %d\n", port);
@@ -505,9 +507,10 @@ int main(void)
                 &client_name_len);
         if (client_sock == -1)
             error_die("accept");
-        accept_request(&client_sock);
-        //if (pthread_create(&newthread , NULL, (void *)accept_request, (void *)(intptr_t)client_sock) != 0)
-        //    perror("pthread_create");
+        printf("server: got connection from %s\n", inet_ntoa(client_name.sin_addr));
+        //accept_request(&client_sock);
+        if (pthread_create(&newthread , NULL, (void *)accept_request, (void *)(intptr_t)client_sock) != 0)
+            perror("pthread_create");
     }
 
     close(server_sock);
